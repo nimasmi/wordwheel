@@ -12,9 +12,6 @@ radial_font_size = int(IMAGE_SIZE/6)
 
 radius = 0.9  # as proportion of image size
 
-im = Image.new('RGB', (IMAGE_SIZE, IMAGE_SIZE), (255, 255, 255))
-d = ImageDraw.Draw(im)
-
 
 def draw_circle(draw_object, image_size, radius, fill, outline):
     border = image_size * (1 - radius) / 2
@@ -25,15 +22,22 @@ def draw_circle(draw_object, image_size, radius, fill, outline):
         ], fill=fill, outline=outline
     )
 
+
+def draw_centred_text(draw_object, coordinates, text, font):
+    x, y = coordinates
+    w, h = draw_object.textsize(text, font=font)
+    draw_object.text((x - w / 2, y - h / 2), text, font=font, fill="black")
+
+
+im = Image.new('RGB', (IMAGE_SIZE, IMAGE_SIZE), (255, 255, 255))
+d = ImageDraw.Draw(im)
+
 # Draw the circles
 draw_circle(d, IMAGE_SIZE, radius, (255, 255, 255), 0)  # outer circle
 draw_circle(d, IMAGE_SIZE, radius / 3, (200, 200, 200), 0)  # inner circle
 
 radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
 centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
-
-def get_corner_coordinates(coordinates, fontsize):
-    return [coord - (fontsize / 2) for coord in coordinates]
 
 # Get centre coordinates of the outer letters
 radial_letter_coordinates = [
@@ -57,9 +61,9 @@ random.shuffle(letters)
 
 # Draw the radial letters
 for letter, (x, y) in zip(letters, radial_letter_coordinates):
-    d.text(get_corner_coordinates((x, y), radial_font_size), letter, font=radial_font, fill=(0,0,0))
+    draw_centred_text(d, (x, y), letter, radial_font)
 
 # Draw the centre letter
-d.text(get_corner_coordinates((IMAGE_SIZE/2, IMAGE_SIZE/2), centre_font_size), letters[-1], font=centre_font, fill=(0,0,0))
+draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
 
 im.save('ww.png')
