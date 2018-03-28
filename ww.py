@@ -5,7 +5,7 @@ import random
 
 from PIL import Image, ImageDraw, ImageFont
 
-IMAGE_SIZE = 400
+IMAGE_SIZE = 4000
 
 FONT_FILE = 'leaguespartan-bold.ttf'
 centre_font_size = int(IMAGE_SIZE/6)
@@ -98,4 +98,5 @@ for letter, (x, y) in zip(letters, radial_letter_coordinates):
 centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
 draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
 
+im.thumbnail((500, 500), Image.ANTIALIAS)
 im.save('ww.png')
