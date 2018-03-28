@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import math
 import random
 
@@ -11,6 +12,14 @@ centre_font_size = int(IMAGE_SIZE/6)
 radial_font_size = int(IMAGE_SIZE/7)
 
 diameter = 0.9  # as proportion of image size
+
+
+parser = argparse.ArgumentParser(description="generate an anagram puzzle image")
+parser.add_argument('word', nargs='?', default=None, help='Use a specified input word')
+parser.add_argument('--verbatim', help="Use the letters in the order given, anticlockwise from 3 o'clock, followed by centre",
+                    action="store_true")
+
+args = parser.parse_args()
 
 
 def draw_circle(draw_object, image_size, diameter, fill, outline):
@@ -64,11 +73,14 @@ radial_letter_coordinates = [
 ]
 
 # Get a word
-with open('wordlist.txt', 'r') as f:
-    word = random.choice(f.readlines()).strip()
+word = args.word
+if not word:
+    with open('wordlist.txt', 'r') as f:
+        word = random.choice(f.readlines()).strip()
 
 letters = list(word.upper())
-random.shuffle(letters)
+if not args.verbatim:
+    random.shuffle(letters)
 
 # Draw the radial letters
 radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
