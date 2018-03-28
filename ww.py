@@ -36,6 +36,20 @@ d = ImageDraw.Draw(im)
 draw_circle(d, IMAGE_SIZE, diameter, (255, 255, 255), 0)  # outer circle
 draw_circle(d, IMAGE_SIZE, diameter / 3, (200, 200, 200), 0)  # inner circle
 
+# Draw the spokes
+spoke_end_coordinates = [
+    (
+        (IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/6 * math.cos(angle)),
+         IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/6 * math.sin(angle))),
+        (IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/2 * math.cos(angle)),
+         IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/2 * math.sin(angle)))
+    )
+    for angle in [math.radians(45 * x) for x in range(8)]
+]
+
+for ((x1, y1), (x2, y2)) in spoke_end_coordinates:
+    d.line(((x1, y1), (x2, y2)), fill="black")
+
 radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
 centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
 
