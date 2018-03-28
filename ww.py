@@ -6,9 +6,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 IMAGE_SIZE = 400
 
-FONT_FILE = '/Library/Fonts/AppleGothic.ttf'
-centre_font_size = int(IMAGE_SIZE/5)
-radial_font_size = int(IMAGE_SIZE/6)
+FONT_FILE = 'leaguespartan-bold.ttf'
+centre_font_size = int(IMAGE_SIZE/6)
+radial_font_size = int(IMAGE_SIZE/7)
 
 diameter = 0.9  # as proportion of image size
 
@@ -50,9 +50,6 @@ spoke_end_coordinates = [
 for ((x1, y1), (x2, y2)) in spoke_end_coordinates:
     d.line(((x1, y1), (x2, y2)), fill="black")
 
-radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
-centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
-
 # Get centre coordinates of the outer letters
 radial_letter_coordinates = [
     (
@@ -74,10 +71,12 @@ letters = list(word.upper())
 random.shuffle(letters)
 
 # Draw the radial letters
+radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
 for letter, (x, y) in zip(letters, radial_letter_coordinates):
     draw_centred_text(d, (x, y), letter, radial_font)
 
 # Draw the centre letter
+centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
 draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
 
 im.save('ww.png')
