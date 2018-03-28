@@ -10,11 +10,11 @@ FONT_FILE = '/Library/Fonts/AppleGothic.ttf'
 centre_font_size = int(IMAGE_SIZE/5)
 radial_font_size = int(IMAGE_SIZE/6)
 
-radius = 0.9  # as proportion of image size
+diameter = 0.9  # as proportion of image size
 
 
-def draw_circle(draw_object, image_size, radius, fill, outline):
-    border = image_size * (1 - radius) / 2
+def draw_circle(draw_object, image_size, diameter, fill, outline):
+    border = image_size * (1 - diameter) / 2
     draw_object.ellipse(
         [
             (border, border),
@@ -33,8 +33,8 @@ im = Image.new('RGB', (IMAGE_SIZE, IMAGE_SIZE), (255, 255, 255))
 d = ImageDraw.Draw(im)
 
 # Draw the circles
-draw_circle(d, IMAGE_SIZE, radius, (255, 255, 255), 0)  # outer circle
-draw_circle(d, IMAGE_SIZE, radius / 3, (200, 200, 200), 0)  # inner circle
+draw_circle(d, IMAGE_SIZE, diameter, (255, 255, 255), 0)  # outer circle
+draw_circle(d, IMAGE_SIZE, diameter / 3, (200, 200, 200), 0)  # inner circle
 
 radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
 centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
@@ -42,8 +42,8 @@ centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
 # Get centre coordinates of the outer letters
 radial_letter_coordinates = [
     (
-        IMAGE_SIZE/2 + (IMAGE_SIZE * radius/3 * math.cos(angle)),
-        IMAGE_SIZE/2 + (IMAGE_SIZE * radius/3 * math.sin(angle))
+        IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/3 * math.cos(angle)),
+        IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/3 * math.sin(angle))
     )
     for angle in
     [
