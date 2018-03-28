@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import datetime
 import math
 import random
 
@@ -17,8 +18,9 @@ diameter = 0.9  # as proportion of image size
 
 parser = argparse.ArgumentParser(description="generate an anagram puzzle image")
 parser.add_argument('word', nargs='?', default=None, help='Use a specified input word')
-parser.add_argument('--verbatim', help="Use the letters in the order given, anticlockwise from 3 o'clock, followed by centre",
+parser.add_argument('--verbatim', help="use the letters in the order given, anticlockwise from 3 o'clock, followed by centre",
                     action="store_true")
+parser.add_argument('-o', '--outfile', help="output filename")
 
 args = parser.parse_args()
 
@@ -99,4 +101,9 @@ centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
 draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
 
 im.thumbnail((500, 500), Image.ANTIALIAS)
-im.save('ww.png')
+
+outfile = args.outfile
+if not outfile:
+    outfile = datetime.date.today().strftime("%Y%m%d") + '.png'
+
+im.save(outfile)
