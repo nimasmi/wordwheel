@@ -6,7 +6,8 @@ import random
 
 from PIL import Image, ImageDraw, ImageFont
 
-IMAGE_SIZE = 4000
+DEFAULT_OUTPUT_SIZE = 500
+SUPERSAMPLING_RATIO = 8  # for antialiasing
 BORDER = 0.1  # as proportion of image size
 INNER_CIRCLE_DIAMETER = 1 / 3  # as proportion of circle diameter
 DEFAULT_FONT_FILE = 'leaguespartan-bold.ttf'
@@ -19,6 +20,7 @@ parser.add_argument('word', nargs='?', default=None, help='Use a specified input
 parser.add_argument('--verbatim', help="use the letters in the order given, clockwise from 3 o'clock, followed by centre",
                     action="store_true")
 parser.add_argument('-o', '--outfile', help="output filename")
+parser.add_argument('-s', '--size', type=int, default=DEFAULT_OUTPUT_SIZE, help="size of the output image")
 parser.add_argument('-f', '--fontfile', default=DEFAULT_FONT_FILE, help="path to a font file")
 
 args = parser.parse_args()
@@ -46,24 +48,25 @@ def draw_centred_text(draw_object, coordinates, text, font):
     draw_object.text((x - w / 2, y - h / 2), text, font=font, fill="black")
 
 
-im = Image.new('RGB', (IMAGE_SIZE, IMAGE_SIZE), (255, 255, 255))
+image_size = args.size * SUPERSAMPLING_RATIO
+im = Image.new('RGB', (image_size, image_size), (255, 255, 255))
 d = ImageDraw.Draw(im)
 
 diameter = 1 - BORDER
 inner_circle_diameter = diameter * INNER_CIRCLE_DIAMETER
-line_width = int(IMAGE_SIZE * LINE_WIDTH)
+line_width = int(image_size * LINE_WIDTH)
 
 # Draw the circles
-draw_circle(d, IMAGE_SIZE, diameter, (255, 255, 255), 0, line_width)  # outer circle
-draw_circle(d, IMAGE_SIZE, inner_circle_diameter, (200, 200, 200), 0, line_width)  # inner circle
+draw_circle(d, image_size, diameter, (255, 255, 255), 0, line_width)  # outer circle
+draw_circle(d, image_size, inner_circle_diameter, (200, 200, 200), 0, line_width)  # inner circle
 
 # Draw the spokes
 spoke_end_coordinates = [
     (
-        (IMAGE_SIZE/2 + (IMAGE_SIZE * inner_circle_diameter/2 * math.cos(angle)),
-         IMAGE_SIZE/2 + (IMAGE_SIZE * inner_circle_diameter/2 * math.sin(angle))),
-        (IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/2 * math.cos(angle)),
-         IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/2 * math.sin(angle)))
+        (image_size/2 + (image_size * inner_circle_diameter/2 * math.cos(angle)),
+         image_size/2 + (image_size * inner_circle_diameter/2 * math.sin(angle))),
+        (image_size/2 + (image_size * diameter/2 * math.cos(angle)),
+         image_size/2 + (image_size * diameter/2 * math.sin(angle)))
     )
     for angle in [math.radians(45 * x) for x in range(8)]
 ]
@@ -74,8 +77,8 @@ for ((x1, y1), (x2, y2)) in spoke_end_coordinates:
 # Get centre coordinates of the outer letters
 radial_letter_coordinates = [
     (
-        IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/3 * math.cos(angle)),
-        IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/3 * math.sin(angle))
+        image_size/2 + (image_size * diameter/3 * math.cos(angle)),
+        image_size/2 + (image_size * diameter/3 * math.sin(angle))
     )
     for angle in
     [
@@ -97,17 +100,18 @@ if not args.verbatim:
 font_file = args.fontfile
 
 # Draw the radial letters
-outer_font_size = int(IMAGE_SIZE * OUTER_FONT_SIZE)
+outer_font_size = int(image_size * OUTER_FONT_SIZE)
 outer_font = ImageFont.truetype(font_file, outer_font_size)
 for letter, (x, y) in zip(letters, radial_letter_coordinates):
     draw_centred_text(d, (x, y), letter, outer_font)
 
 # Draw the centre letter
-centre_font_size = int(IMAGE_SIZE * CENTRE_FONT_SIZE)
+centre_font_size = int(image_size * CENTRE_FONT_SIZE)
 centre_font = ImageFont.truetype(font_file, centre_font_size)
-draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
+draw_centred_text(d, (image_size / 2, image_size / 2), letters[-1], font=centre_font)
 
-im.thumbnail((500, 500), Image.ANTIALIAS)
+output_size = args.size
+im.thumbnail((output_size, output_size), Image.ANTIALIAS)
 
 outfile = args.outfile
 if not outfile:
