@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 IMAGE_SIZE = 4000
 BORDER = 0.1  # as proportion of image size
 INNER_CIRCLE_DIAMETER = 1 / 3  # as proportion of circle diameter
-FONT_FILE = 'leaguespartan-bold.ttf'
+DEFAULT_FONT_FILE = 'leaguespartan-bold.ttf'
 CENTRE_FONT_SIZE = 0.2  # as proportion of image size
 OUTER_FONT_SIZE = 0.15  # as proportion of image size
 LINE_WIDTH = 0.0075  # as proportion of image size
@@ -19,6 +19,7 @@ parser.add_argument('word', nargs='?', default=None, help='Use a specified input
 parser.add_argument('--verbatim', help="use the letters in the order given, clockwise from 3 o'clock, followed by centre",
                     action="store_true")
 parser.add_argument('-o', '--outfile', help="output filename")
+parser.add_argument('-f', '--fontfile', default=DEFAULT_FONT_FILE, help="path to a font file")
 
 args = parser.parse_args()
 
@@ -93,15 +94,17 @@ letters = list(word.upper())
 if not args.verbatim:
     random.shuffle(letters)
 
+font_file = args.fontfile
+
 # Draw the radial letters
 outer_font_size = int(IMAGE_SIZE * OUTER_FONT_SIZE)
-outer_font = ImageFont.truetype(FONT_FILE, outer_font_size)
+outer_font = ImageFont.truetype(font_file, outer_font_size)
 for letter, (x, y) in zip(letters, radial_letter_coordinates):
     draw_centred_text(d, (x, y), letter, outer_font)
 
 # Draw the centre letter
 centre_font_size = int(IMAGE_SIZE * CENTRE_FONT_SIZE)
-centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
+centre_font = ImageFont.truetype(font_file, centre_font_size)
 draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
 
 im.thumbnail((500, 500), Image.ANTIALIAS)
