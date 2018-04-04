@@ -13,6 +13,7 @@ INNER_CIRCLE_DIAMETER = 1 / 3  # as proportion of circle diameter
 DEFAULT_FONT_FILE = 'leaguespartan-bold.ttf'
 CENTRE_FONT_SIZE = 0.2  # as proportion of image size
 OUTER_FONT_SIZE = 0.15  # as proportion of image size
+LETTER_POSITION = 0.5  # as a proportion of the length of the spokes, inside to outside
 LINE_WIDTH = 0.0075  # as proportion of image size
 
 parser = argparse.ArgumentParser(description="generate an anagram puzzle image")
@@ -75,10 +76,11 @@ for ((x1, y1), (x2, y2)) in spoke_end_coordinates:
     d.line(((x1, y1), (x2, y2)), fill="black", width=line_width)
 
 # Get centre coordinates of the outer letters
+letter_radius = image_size/2 * (inner_circle_diameter + LETTER_POSITION * (diameter - inner_circle_diameter))
 radial_letter_coordinates = [
     (
-        image_size/2 + (image_size * diameter/3 * math.cos(angle)),
-        image_size/2 + (image_size * diameter/3 * math.sin(angle))
+        image_size/2 + letter_radius * math.cos(angle),  # x
+        image_size/2 + letter_radius * math.sin(angle)  # y
     )
     for angle in
     [
