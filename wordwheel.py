@@ -7,14 +7,12 @@ import random
 from PIL import Image, ImageDraw, ImageFont
 
 IMAGE_SIZE = 4000
-
+BORDER = 0.1  # as proportion of image size
+INNER_CIRCLE_DIAMETER = 1 / 3  # as proportion of circle diameter
 FONT_FILE = 'leaguespartan-bold.ttf'
-centre_font_size = int(IMAGE_SIZE/6)
-radial_font_size = int(IMAGE_SIZE/7)
-line_width = int(IMAGE_SIZE/100)
-
-diameter = 0.9  # as proportion of image size
-
+CENTRE_FONT_SIZE = 0.2  # as proportion of image size
+OUTER_FONT_SIZE = 0.15  # as proportion of image size
+LINE_WIDTH = 0.0075  # as proportion of image size
 
 parser = argparse.ArgumentParser(description="generate an anagram puzzle image")
 parser.add_argument('word', nargs='?', default=None, help='Use a specified input word')
@@ -50,15 +48,19 @@ def draw_centred_text(draw_object, coordinates, text, font):
 im = Image.new('RGB', (IMAGE_SIZE, IMAGE_SIZE), (255, 255, 255))
 d = ImageDraw.Draw(im)
 
+diameter = 1 - BORDER
+inner_circle_diameter = diameter * INNER_CIRCLE_DIAMETER
+line_width = int(IMAGE_SIZE * LINE_WIDTH)
+
 # Draw the circles
 draw_circle(d, IMAGE_SIZE, diameter, (255, 255, 255), 0, line_width)  # outer circle
-draw_circle(d, IMAGE_SIZE, diameter / 3, (200, 200, 200), 0, line_width)  # inner circle
+draw_circle(d, IMAGE_SIZE, inner_circle_diameter, (200, 200, 200), 0, line_width)  # inner circle
 
 # Draw the spokes
 spoke_end_coordinates = [
     (
-        (IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/6 * math.cos(angle)),
-         IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/6 * math.sin(angle))),
+        (IMAGE_SIZE/2 + (IMAGE_SIZE * inner_circle_diameter/2 * math.cos(angle)),
+         IMAGE_SIZE/2 + (IMAGE_SIZE * inner_circle_diameter/2 * math.sin(angle))),
         (IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/2 * math.cos(angle)),
          IMAGE_SIZE/2 + (IMAGE_SIZE * diameter/2 * math.sin(angle)))
     )
@@ -92,11 +94,13 @@ if not args.verbatim:
     random.shuffle(letters)
 
 # Draw the radial letters
-radial_font = ImageFont.truetype(FONT_FILE, radial_font_size)
+outer_font_size = int(IMAGE_SIZE * OUTER_FONT_SIZE)
+outer_font = ImageFont.truetype(FONT_FILE, outer_font_size)
 for letter, (x, y) in zip(letters, radial_letter_coordinates):
-    draw_centred_text(d, (x, y), letter, radial_font)
+    draw_centred_text(d, (x, y), letter, outer_font)
 
 # Draw the centre letter
+centre_font_size = int(IMAGE_SIZE * CENTRE_FONT_SIZE)
 centre_font = ImageFont.truetype(FONT_FILE, centre_font_size)
 draw_centred_text(d, (IMAGE_SIZE / 2, IMAGE_SIZE / 2), letters[-1], font=centre_font)
 
