@@ -9,12 +9,12 @@ from PIL import Image, ImageDraw, ImageFont
 DEFAULT_OUTPUT_SIZE = 500
 SUPERSAMPLING_RATIO = 8  # for antialiasing
 BORDER = 0.1  # as proportion of image size
-INNER_CIRCLE_DIAMETER = 1 / 3  # as proportion of circle diameter
+INNER_CIRCLE_DIAMETER = 0.37  # as proportion of circle diameter
 DEFAULT_FONT_FILE = 'leaguespartan-bold.ttf'
-CENTRE_FONT_SIZE = 0.2  # as proportion of image size
-OUTER_FONT_SIZE = 0.15  # as proportion of image size
+CENTRE_FONT_SIZE = 0.22  # as proportion of image size
+OUTER_FONT_SIZE = 0.145  # as proportion of image size
 LETTER_POSITION = 0.5  # as a proportion of the length of the spokes, inside to outside
-LINE_WIDTH = 0.0075  # as proportion of image size
+LINE_WIDTH = 0.012  # as proportion of image size
 
 parser = argparse.ArgumentParser(description="generate an anagram puzzle image")
 parser.add_argument('word', nargs='?', default=None, help='Use a specified input word')
