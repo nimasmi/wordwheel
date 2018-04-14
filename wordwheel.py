@@ -2,6 +2,7 @@
 import argparse
 import datetime
 import math
+import os
 import random
 
 from PIL import Image, ImageDraw, ImageFont
@@ -16,6 +17,7 @@ OUTER_FONT_SIZE = 0.145  # as proportion of image size
 LETTER_POSITION = 0.5  # as a proportion of the length of the spokes, inside to outside
 LINE_WIDTH = 0.012  # as proportion of image size
 
+DEFAULT_FONT_FILE = os.environ.get('WORDWHEEL_FONT_FILE', DEFAULT_FONT_FILE)
 
 
 def draw_circle(draw_object, image_size, diameter, fill, outline, thickness=1):
