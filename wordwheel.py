@@ -40,7 +40,7 @@ def draw_centred_text(draw_object, coordinates, text, font):
     draw_object.text((x - w / 2, y - h / 2), text, font=font, fill="black")
 
 
-def make_image(letters, verbatim=False, output_size=DEFAULT_OUTPUT_SIZE,
+def make_image(letters, output_size=DEFAULT_OUTPUT_SIZE,
                font_file=DEFAULT_FONT_FILE):
     """ Do something """
 
@@ -100,6 +100,20 @@ def make_image(letters, verbatim=False, output_size=DEFAULT_OUTPUT_SIZE,
     return im
 
 
+def get_word():
+    """ Gets a word """
+    with open('wordlist.txt', 'r') as f:
+        word = random.choice(f.readlines()).strip()
+    return word
+
+
+def word_to_letters(word, verbatim):
+    letters = list(word.upper())
+    if not verbatim:
+        random.shuffle(letters)
+    return letters
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="generate an anagram puzzle image")
     parser.add_argument('word', nargs='?', default=None, help='Use a specified input word')
@@ -111,18 +125,16 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # Get a word
     word = args.word
+    print(f"args.word: {word}")
     if not word:
-        with open('wordlist.txt', 'r') as f:
-            word = random.choice(f.readlines()).strip()
+        word = get_word()
+        print(f"got word: {word}")
 
-    letters = list(word.upper())
-    if not args.verbatim:
-        random.shuffle(letters)
+    letters = word_to_letters(word, args.verbatim)
+    print(f"letters: {''.join(letters)}")
 
-    im = make_image(letters, output_size=args.size,
-                    font_file=args.fontfile)
+    im = make_image(letters, output_size=args.size, font_file=args.fontfile)
 
     outfile = args.outfile
     if not outfile:
